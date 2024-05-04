@@ -163,6 +163,8 @@ want_seccomp = get_option('seccomp')
 want_thread_safety = get_option('thread-safety')
 want_memfd_rexec = get_option('memfd-rexec')
 want_sd_bus = get_option('sd-bus')
+want_apparmor_forced = get_option('force-apparmor')
+want_aarch64_kernel = get_option('aarch64-kernel')
 
 srcconf.set_quoted('DEFAULT_CGROUP_PATTERN', cgrouppattern)
 if coverity
@@ -428,13 +430,20 @@ else
 endif
 
 ## AppArmor.
-if want_apparmor
+if want_apparmor_forced # we dont have libapparmor, but want apparmor support enabled
+    srcconf.set10('HAVE_APPARMOR', true)
+    libapparmor = dependency('', required: false)
+elif want_apparmor
     libapparmor = dependency('libapparmor', required: false)
     srcconf.set10('HAVE_APPARMOR', libapparmor.found())
     # We do not use the AppArmor library at runtime, so it's not in our pkg-config.
     liblxc_dependencies += libapparmor
 else
     srcconf.set10('HAVE_APPARMOR', false)
+endif
+
+if want_aarch64_kernel
+    srcconf.set10('HAVE_AARCH64_KERNEL', true)
 endif
 
 ## OpenSSL.
@@ -492,7 +501,14 @@ if want_oss_fuzz
 endif
 
 srcconf.set10('ENFORCE_THREAD_SAFETY', want_thread_safety)
-srcconf.set10('ENFORCE_MEMFD_REXEC', want_memfd_rexec)
+# in sources memfd_reexec checked [erroneously] like this:
+# #ifdef ENFORCE_MEMFD_REXEC
+# which is true regardless of ENFORCE_MEMFD_REXEC value (0 or 1)
+# so we just skip srcconf.set10 if we do not want_memfd_rexec
+if want_memfd_rexec
+    srcconf.set10('ENFORCE_MEMFD_REXEC', want_memfd_rexec)
+endif
+
 
 ## PAM.
 pam = cc.find_library('pam', has_headers: 'security/pam_modules.h', required: want_pam_cgroup)

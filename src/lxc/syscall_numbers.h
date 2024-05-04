@@ -738,4 +738,16 @@
 	#endif
 #endif
 
+// aurora built with 32-bit arm compiler but
+// launched on top of aarch64 kernel, so some of syscall
+// numbers are just WRONG. fix it inelegantly:
+
+#if defined(__arm__) && HAVE_AARCH64_KERNEL
+#  undef __NR_memfd_create
+#  define __NR_memfd_create 279
+
+#  undef __NR_personality
+#  define __NR_personality 92
+#endif
+
 #endif /* __LXC_SYSCALL_NUMBERS_H */

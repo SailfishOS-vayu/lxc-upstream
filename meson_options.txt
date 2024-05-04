@@ -31,7 +31,7 @@ option('sd-bus', type: 'feature', value: 'auto',
        description: 'Enable linking against sd-bus')
 
 # was --{disable,enable}-doc in autotools
-option('man', type: 'boolean', value: 'true',
+option('man', type: 'boolean', value: 'false',
        description: 'build and install manpages')
 
 # was --{disable,enable}-pam in autotools
@@ -57,6 +57,14 @@ option('seccomp', type: 'boolean', value: 'true',
 # was --{disable,enable}-apparmor in autotools
 option('apparmor', type: 'boolean', value: 'true',
        description: 'use apparmor')
+
+# was --{disable,enable}-force-apparmor in autotools
+option('force-apparmor', type: 'boolean', value: 'true',
+       description: 'force use apparmor despite of libapparmor presence')
+
+# was --{disable,enable}-aarch64-kernel in autotools
+option('aarch64-kernel', type: 'boolean', value: 'true',
+       description: 'whether we have arm32 apps on top of arm64 kernel')
 
 # was --{disable,enable}-openssl in autotools
 option('openssl', type: 'boolean', value: 'true',
@@ -115,7 +123,7 @@ option('thread-safety', type : 'boolean', value : 'true',
        description : 'whether the build fails when thread-safe logging cannot be guaranteed')
 
 # was --{disable,enable}-memfd-rexec in autotools
-option('memfd-rexec', type : 'boolean', value : 'true',
+option('memfd-rexec', type : 'boolean', value : 'false',
        description : 'whether to rexec the lxc-attach binary when attaching to a container')
 
 option('distrosysconfdir', type : 'string', value: '',

@@ -1720,7 +1720,9 @@ static int lxc_spawn(struct lxc_handler *handler)
 		 * for pidfds. So let's special-case arm64 to not fail starting
 		 * containers.
 		 */
-		#if defined(__aarch64__)
+                // compiles 32-bit apps on top of aarch64 kernel
+                // here we deal with syscalls so need to force __aarch64__ branch
+		#if defined(__aarch64__) || HAVE_AARCH64_KERNEL
 			handler->pid = lxc_raw_legacy_clone(handler->clone_flags & ~CLONE_PIDFD, NULL);
 		#else
 			handler->pid = lxc_raw_legacy_clone(handler->clone_flags, &handler->pidfd);

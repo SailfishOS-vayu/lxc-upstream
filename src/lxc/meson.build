@@ -139,7 +139,8 @@ liblxc_sources = files(
     'uuid.c',
     'uuid.h')
 
-if want_apparmor and libapparmor.found()
+if want_apparmor_forced or
+  (want_apparmor and libapparmor.found())
     liblxc_sources += files('lsm/apparmor.c')
 endif
 
